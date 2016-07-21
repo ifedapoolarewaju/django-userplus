@@ -4,3 +4,6 @@ db.sqlite3
 staticfiles
 .DS_Store
 .jsbeautifyrc
+build/
+dist/
+*.egg-info
