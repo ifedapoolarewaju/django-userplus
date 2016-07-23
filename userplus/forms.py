@@ -12,7 +12,6 @@ class SignUpForm(forms.ModelForm):
         model = get_user_model()
         fields = ('email', 'username', 'password')
         widgets = {
-            'username': forms.TextInput(),
             'password': forms.PasswordInput(),
         }
 

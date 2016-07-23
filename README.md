@@ -12,8 +12,8 @@ Django-Userplus is an extenstion of Django auth_user module that comes with some
 ```
 $ pip install django-userplus
 ```
-add ```"userplus"``` to ```INSTALLED_APPS``` in your settings file
-add to `urls.py`
+* add ```"userplus"``` to ```INSTALLED_APPS``` in your settings file
+* add the following to `urls.py`
 ```
 url(r'^user/', include('userplus.urls')),
 ```
