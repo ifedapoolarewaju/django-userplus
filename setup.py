@@ -1,7 +1,7 @@
 from setuptools import setup
 
 setup(name='django-userplus',
-      version='0.1',
+      version='0.2',
       description='Extended Auth User module for Django',
       url='https://github.com/ifedapoolarewaju/django-userplus.git',
       author='Ifedapo Olarewaju',
