@@ -2,8 +2,7 @@ import re
 
 from django import forms
 from django.contrib.auth import get_user_model
-
-from userplus.lib.utils import hash_str
+from django.conf import settings
 
 
 class SignUpForm(forms.ModelForm):
@@ -18,10 +17,10 @@ class SignUpForm(forms.ModelForm):
     def save(self, commit=True):
         user = super(SignUpForm, self).save(commit=False)
         user.set_password(self.cleaned_data["password"])
-        user.is_active = False
         if commit:
-            user.activation_key = hash_str(user.email, 5)
-            user.save()
+            kwargs = {'set_activation_key': settings.getattr('USERPLUS_SET_ACTIVATION_KEY')}
+            user.is_active = not kwargs['set_activation_key']
+            user.save(**kwargs)
         return user
 
 

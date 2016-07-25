@@ -4,33 +4,30 @@ import uuid
 
 from django.db import models
 from django.contrib.auth.models import AbstractUser
-from django.contrib.auth import get_user_model
+from django.conf import settings
 
 from userplus.validators import password_pattern
+from userplus.lib.utils import hash_str
 
 
 class UserPlus(AbstractUser):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    activation_key = models.CharField(max_length=400, blank=True)
-    activation_expiry_date = models.DateTimeField()
+    activation_key = models.CharField(max_length=400, blank=True, null=True)
+    activation_expiry_date = models.DateTimeField(blank=True, null=True)
 
     class Meta:
         abstract = True
         unique_together = ('email',)  # hack to make emails unique
 
     def save(self, *args, **kwargs):
-        self.set_activation_expiry()
+        if kwargs.pop('set_activation_key'):
+            self.set_activation_key()
         super(UserPlus, self).save(*args, **kwargs)
 
-    def set_activation_expiry(self):
-        if self.activation_key:
-            UserModel = get_user_model()
-            try:
-                instance = UserModel.objects.get(username=self.username)
-            except UserModel.DoesNotExist:
-                instance = None
-            if not instance or self.activation_key != instance.activation_key:
-                self.activation_expiry_date = datetime.datetime.now() + datetime.timedelta(days=2)
+    def set_activation_key(self):
+        self.activation_key = hash_str(self.email, 5)
+        activation_days = datetime.timedelta(days=settings.getattr('USERPLUS_ACTIVATION_DAYS', 2))
+        self.activation_expiry_date = datetime.datetime.now() + activation_days
 
 
 UserPlus._meta.get_field('password').validators = [password_pattern]
