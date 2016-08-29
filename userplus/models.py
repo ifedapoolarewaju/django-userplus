@@ -6,7 +6,6 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.conf import settings
 
-from userplus.validators import password_pattern
 from userplus.lib.utils import hash_str
 
 
@@ -33,6 +32,3 @@ class UserPlus(AbstractUser):
         self.activation_key = hash_str(self.email, 5)
         activation_days = datetime.timedelta(days=settings.getattr('USERPLUS_ACTIVATION_DAYS', 2))
         self.activation_expiry_date = datetime.datetime.now() + activation_days
-
-
-UserPlus._meta.get_field('password').validators = [password_pattern]

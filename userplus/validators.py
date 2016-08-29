@@ -1,16 +1,17 @@
 import re
 
 from django.core.exceptions import ValidationError
+from django.utils.translation import ugettext as _
 
 
-def username_pattern(value):
-    pattern = re.compile(r'^([\w\-\_@.]+)')
-    if not pattern.match(value) or pattern.match(value).groups()[0] != value:
-        raise ValidationError('"%s" is not a valid username. Spaces are not allowed.' % value)
+class PatternValidator(object):
+    error_message = ('Password Must contain Uppercase and Lowercase Alphabet,'
+                     ' Number and Special Character.')
 
+    def validate(self, password, user=None):
+        pattern = re.compile(r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[$@$!%*?&.])')
+        if not pattern.match(password):
+            raise ValidationError(_(self.error_message), code='password_too_weak')
 
-def password_pattern(value):
-    pattern = re.compile(r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[$@$!%*?&.])[A-Za-z\d$@$!%*?&.]{8,}')
-    if not pattern.match(value):
-        raise ValidationError(
-            'Must contain 8 characters, Uppercase and Lowercase Alphabet, Number and Special Character')
+    def get_help_text(self):
+        return _(self.error_message)
