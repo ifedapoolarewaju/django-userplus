@@ -24,11 +24,11 @@ class UserPlus(AbstractUser):
             self.username = self.username.lower()
             self.email = self.email.lower()
 
-        if kwargs.pop('set_activation_key'):
+        if 'set_activation_key' in kwargs and kwargs.pop('set_activation_key'):
             self.set_activation_key()
         super(UserPlus, self).save(*args, **kwargs)
 
     def set_activation_key(self):
         self.activation_key = hash_str(self.email, 5)
-        activation_days = datetime.timedelta(days=settings.getattr('USERPLUS_ACTIVATION_DAYS', 2))
+        activation_days = datetime.timedelta(days=getattr(settings, 'USERPLUS_ACTIVATION_DAYS', 2))
         self.activation_expiry_date = datetime.datetime.now() + activation_days

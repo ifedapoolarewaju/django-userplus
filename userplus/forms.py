@@ -17,9 +17,9 @@ class SignUpForm(forms.ModelForm):
     def save(self, commit=True):
         user = super(SignUpForm, self).save(commit=False)
         user.set_password(self.cleaned_data["password"])
+        kwargs = {'set_activation_key': getattr(settings, 'USERPLUS_SET_ACTIVATION_KEY')}
+        user.is_active = not kwargs['set_activation_key']
         if commit:
-            kwargs = {'set_activation_key': settings.getattr('USERPLUS_SET_ACTIVATION_KEY')}
-            user.is_active = not kwargs['set_activation_key']
             user.save(**kwargs)
         return user
 
