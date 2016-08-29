@@ -20,6 +20,11 @@ class UserPlus(AbstractUser):
         unique_together = ('email',)  # hack to make emails unique
 
     def save(self, *args, **kwargs):
+        # coerce to lowercase for case insensitivity.
+        if not self.pk:
+            self.username = self.username.lower()
+            self.email = self.email.lower()
+
         if kwargs.pop('set_activation_key'):
             self.set_activation_key()
         super(UserPlus, self).save(*args, **kwargs)
