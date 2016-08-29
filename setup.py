@@ -8,5 +8,5 @@ setup(name='django-userplus',
       author_email='ifedapoolarewaju@gmail.com',
       license='MIT',
       packages=['userplus', 'userplus.lib'],
-      install_requires=['Django>=1.8', 'Django<1.10'],
+      install_requires=['Django>=1.9'],
       zip_safe=False)
