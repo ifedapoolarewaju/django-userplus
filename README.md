@@ -1,9 +1,14 @@
 # django-userplus
 Django-Userplus is an extenstion of Django auth_user module that comes with some extra functionalities.
 
+### Compatibility
+django >= 1.9
+
+
 ### Features
 * Login with username or email
 * uuid primary key
+* case-insensitve authentication
 * generates user activation key on signup
 * improved password validatior
 
@@ -86,7 +91,22 @@ user = authenticate(email='johndoe@email.com', password='MySecret')
 If you use userplus SigninForm this already comes with a `username_or_email` field that auto-detects what the user has passed in.
 
 ### User Activation key:
-On Signup an activation key is set for the user. The user needs to activate this before she can login. After saving the user form on signup, an activation email can be sent like so.
+To set activation key on signup, add the following to `settings.py`.
+
+```python
+...
+USERPLUS_SET_ACTIVATION_KEY = True
+...
+```
+you can also set an *optional* parameter for how long the key is valid for. This defaults to 2 days if not set;
+
+```python
+...
+USERPLUS_ACTIVATION_DAYS = 3  # valid for 3 days.
+...
+```
+
+On Signup an activation key will then be set for the user. The user needs to activate this before she can login. After saving the user form on signup, an activation email can be sent like so.
 
 ```python
 ...
@@ -96,3 +116,16 @@ url = reverse('userplus_confirm_registration', kwargs={
 user.email_user('Confirmation Email', url)
 ```
 
+### Password Validation:
+Although django 1.9 comes with quite some useful password validators. You can also add Userplus pattern validator to enforce a stronger password. Simply add to the already existing `AUTH_PASSWORD_VALIDATORS` variable in `settings.py`.
+
+```python
+...
+AUTH_PASSWORD_VALIDATORS = [
+    ...
+    {
+        'NAME': 'userplus.validators.PatternValidator',
+    },
+]
+```
+this would enusre the password contains uppercase and lowercase alphabet, Number and Special Character.
