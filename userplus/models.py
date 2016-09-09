@@ -4,6 +4,7 @@ import uuid
 
 from django.db import models
 from django.contrib.auth.models import AbstractUser
+from django.forms.models import model_to_dict
 from django.conf import settings
 
 from userplus.lib.utils import hash_str
@@ -32,3 +33,11 @@ class UserPlus(AbstractUser):
         self.activation_key = hash_str(self.email, 5)
         activation_days = datetime.timedelta(days=getattr(settings, 'USERPLUS_ACTIVATION_DAYS', 2))
         self.activation_expiry_date = datetime.datetime.now() + activation_days
+
+    def to_dict(self, fields=None, exclude=None):
+        if not fields and hasattr(self, 'public_fields'):
+            fields = getattr(self, 'public_fields')
+
+        dict_ = model_to_dict(self, fields=fields, exclude=exclude)
+        dict_['id'] = str(self.id)
+        return dict_
