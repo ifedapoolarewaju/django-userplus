@@ -6,6 +6,9 @@ from django.conf import settings
 
 
 class SignUpForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super(SignUpForm, self).__init__(*args, **kwargs)
+        self.fields['email'].required = True
 
     class Meta:
         model = get_user_model()
